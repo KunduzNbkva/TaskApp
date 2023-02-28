@@ -1,5 +1,6 @@
 package com.example.taskapp.ui.onboard
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import com.example.taskapp.R
 import com.example.taskapp.databinding.FragmentOnBoardPageBinding
+import com.example.taskapp.utils.Preferences
 
 
 class OnBoardPageFragment(  var listenerSkip: () -> Unit, var listenerNext: () -> Unit) : Fragment() {
@@ -30,7 +32,9 @@ class OnBoardPageFragment(  var listenerSkip: () -> Unit, var listenerNext: () -
 
     private fun initListeners() {
         binding.btnStart.setOnClickListener {
-            findNavController().navigate(R.id.navigation_home)
+            findNavController().navigateUp()
+            Preferences(requireContext()).board = true
+
         }
         binding.btnSkip.setOnClickListener {
             findNavController().navigate(R.id.navigation_home)

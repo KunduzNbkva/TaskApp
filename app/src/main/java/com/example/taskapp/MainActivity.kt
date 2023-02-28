@@ -9,6 +9,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.taskapp.databinding.ActivityMainBinding
+import com.example.taskapp.utils.Preferences
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,6 +32,10 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_profile
             )
         )
+
+        if (!Preferences(applicationContext).board) navController.navigate(R.id.onBoardFragment)
+
+
         navController.addOnDestinationChangedListener{ _,destination,_ ->
             if(destination.id == R.id.navigation_new_task || destination.id == R.id.onBoardFragment) {
                 navView.visibility = View.GONE

@@ -2,11 +2,16 @@ package com.example.taskapp.ui.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
+import com.example.taskapp.App
 import com.example.taskapp.databinding.TaskItemBinding
+import com.example.taskapp.extentions.alert
+import com.example.taskapp.ui.models.TaskModel
 
 
-class TaskAdapter: RecyclerView.Adapter<TaskAdapter.TaskHolder>() {
+class TaskAdapter(val click: OnLongItemClick): RecyclerView.Adapter<TaskAdapter.TaskHolder>() {
   private var taskList = arrayListOf<TaskModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskHolder {
@@ -25,13 +30,37 @@ class TaskAdapter: RecyclerView.Adapter<TaskAdapter.TaskHolder>() {
         taskList.add(taskModel)
     }
 
+    fun addAllTasksRoom(list:List<TaskModel>){
+        taskList = list as ArrayList<TaskModel>
+        notifyDataSetChanged()
+    }
+
+    fun getItem(position: Int):TaskModel{
+        return  taskList[position]
+    }
+
+    fun removeItem(position: Int){
+        taskList.removeAt(position)
+        notifyItemRemoved(position)
+    }
 
 
     inner class TaskHolder(private var binding: TaskItemBinding):RecyclerView.ViewHolder(binding.root) {
         fun bind(taskModel: TaskModel) {
             binding.tvTitleItem.text = taskModel.title
             binding.tvTitleDesc.text = taskModel.desc
+
+            binding.root.setOnLongClickListener {
+                click.longClick(adapterPosition)
+                true
+            }
+
+
         }
     }
 
+}
+
+interface  OnLongItemClick{
+    fun longClick(position: Int)
 }

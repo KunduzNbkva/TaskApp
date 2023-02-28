@@ -1,6 +1,7 @@
 package com.example.taskapp.ui.home.new_task
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +9,9 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
+import com.example.taskapp.App
 import com.example.taskapp.databinding.FragmentNewTaskBinding
+import com.example.taskapp.ui.models.TaskModel
 
 class NewTaskFragment : Fragment() {
     private lateinit var binding: FragmentNewTaskBinding
@@ -29,10 +32,16 @@ class NewTaskFragment : Fragment() {
 
     private fun initListeners() {
       binding.btnSave.setOnClickListener {
-          setFragmentResult(TASK_KEY, bundleOf(
-              "title" to binding.etTitle.text.toString(),
-              "desc" to binding.etDesc.text.toString()
-          ))
+//          setFragmentResult(TASK_KEY, bundleOf(
+//              "title" to binding.etTitle.text.toString(),
+//              "desc" to binding.etDesc.text.toString()
+//          ))
+          App.db.taskDao().insert(TaskModel(
+              title = binding.etTitle.text.toString(),
+              desc = binding.etDesc.text.toString())
+          )
+
+          Log.e("ololo","Room inserted successfully!")
           findNavController().navigateUp()
       }
     }
