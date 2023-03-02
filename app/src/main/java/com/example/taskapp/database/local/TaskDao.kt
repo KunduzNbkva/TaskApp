@@ -9,7 +9,7 @@ import com.example.taskapp.ui.models.TaskModel
 @Dao
 interface TaskDao {
 
-    @Query("SELECT * FROM TaskModel")
+    @Query("SELECT * FROM TaskModel ORDER BY date DESC")
     fun getAllTasks() :  MutableList<TaskModel>
 
     @Insert
@@ -24,7 +24,7 @@ interface TaskDao {
     @Query("SELECT * FROM TaskModel ORDER BY title DESC")
     fun getTasksFromZ(): MutableList<TaskModel>
 
-    @Query("SELECT * FROM TaskModel ORDER BY date DESC")
+    @Query("SELECT * FROM TaskModel ORDER BY date ASC")
     fun getTasksByDate(): MutableList<TaskModel>
 
 }
