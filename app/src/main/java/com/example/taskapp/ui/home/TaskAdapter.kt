@@ -1,18 +1,15 @@
 package com.example.taskapp.ui.home
 
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
+import android.util.Log
+import android.view.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.taskapp.App
 import com.example.taskapp.databinding.TaskItemBinding
-import com.example.taskapp.extentions.alert
 import com.example.taskapp.ui.models.TaskModel
 
 
 class TaskAdapter(val click: OnLongItemClick): RecyclerView.Adapter<TaskAdapter.TaskHolder>() {
-  private var taskList = arrayListOf<TaskModel>()
+  private var taskList = mutableListOf<TaskModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskHolder {
         return TaskHolder(TaskItemBinding.inflate(LayoutInflater.from(parent.context), parent,false))
@@ -30,8 +27,8 @@ class TaskAdapter(val click: OnLongItemClick): RecyclerView.Adapter<TaskAdapter.
         taskList.add(taskModel)
     }
 
-    fun addAllTasksRoom(list:List<TaskModel>){
-        taskList = list as ArrayList<TaskModel>
+    fun addAllTasksRoom(list:MutableList<TaskModel>){
+        taskList = list
         notifyDataSetChanged()
     }
 
@@ -42,6 +39,18 @@ class TaskAdapter(val click: OnLongItemClick): RecyclerView.Adapter<TaskAdapter.
     fun removeItem(position: Int){
         taskList.removeAt(position)
         notifyItemRemoved(position)
+    }
+
+    fun filter(fromA: Boolean ) {
+        if(fromA) {
+            taskList.clear()
+            taskList.addAll(App.db.taskDao().getTasksFromA())
+            Log.e("ololo","filter works")
+        } else {
+            taskList.clear()
+            taskList.addAll(App.db.taskDao().getTasksFromZ())
+        }
+        notifyDataSetChanged()
     }
 
 
@@ -64,3 +73,4 @@ class TaskAdapter(val click: OnLongItemClick): RecyclerView.Adapter<TaskAdapter.
 interface  OnLongItemClick{
     fun longClick(position: Int)
 }
+

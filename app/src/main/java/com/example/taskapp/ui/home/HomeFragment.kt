@@ -1,22 +1,21 @@
 package com.example.taskapp.ui.home
 
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.taskapp.App
 import com.example.taskapp.R
 import com.example.taskapp.databinding.FragmentHomeBinding
-import com.example.taskapp.ui.home.new_task.NewTaskFragment.Companion.TASK_KEY
+import com.example.taskapp.extentions.showToast
 import com.example.taskapp.ui.models.TaskModel
 
-class HomeFragment : Fragment(), OnLongItemClick {
+class HomeFragment : Fragment(), OnLongItemClick{
    private lateinit var binding:FragmentHomeBinding
    private lateinit var taskAdapter: TaskAdapter
 
@@ -66,7 +65,7 @@ class HomeFragment : Fragment(), OnLongItemClick {
 
     private fun getDataFromLocalDB(){
        val listAllTasks =  App.db.taskDao().getAllTasks().reversed()
-        taskAdapter.addAllTasksRoom(listAllTasks)
+        taskAdapter.addAllTasksRoom(listAllTasks as MutableList<TaskModel>)
     }
 
     override fun longClick(position: Int) {
@@ -84,6 +83,41 @@ class HomeFragment : Fragment(), OnLongItemClick {
         }
         builder.show()
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onPrepareMenu(menu: Menu) {
+
+            }
+
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.action_bar_menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                // Handle the menu selection
+                return when (menuItem.itemId) {
+                    R.id.action_sort_by_a -> {
+                        taskAdapter.filter(true)
+                        showToast("Filtered from A to Z")
+                        true
+                    }
+                    R.id.action_sort_by_z -> {
+                        taskAdapter.filter(false)
+                        showToast("Filtered from Z to A")
+                        true
+                    }
+                    else -> false
+                }
+            }
+
+            override fun onMenuClosed(menu: Menu) {
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
+
 
 
 }

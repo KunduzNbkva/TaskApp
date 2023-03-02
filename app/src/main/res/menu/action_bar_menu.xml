@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_sort_by_a"
+        android:icon="@drawable/sort_by_alpha"
+        android:title="@string/from_a_to_z"
+        app:showAsAction="collapseActionView"/>
+
+    <item
+        android:id="@+id/action_sort_by_z"
+        android:icon="@drawable/sort_by_alpha"
+        android:title="@string/from_z_to_a"
+        app:showAsAction="collapseActionView"/>
+
+</menu>
