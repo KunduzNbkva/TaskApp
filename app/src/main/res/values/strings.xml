@@ -7,4 +7,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="new_task">New task</string>
     <string name="title_profile">Profile</string>
+    <string name="from_a_to_z">From A to Z</string>
+    <string name="from_z_to_a">From Z to A</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="by_date">By date</string>
 </resources>

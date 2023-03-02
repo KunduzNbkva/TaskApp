@@ -45,11 +45,19 @@ class TaskAdapter(val click: OnLongItemClick): RecyclerView.Adapter<TaskAdapter.
         if(fromA) {
             taskList.clear()
             taskList.addAll(App.db.taskDao().getTasksFromA())
-            Log.e("ololo","filter works")
+            Log.e("ololo","filter by letter A")
         } else {
             taskList.clear()
             taskList.addAll(App.db.taskDao().getTasksFromZ())
+            Log.e("ololo","filter by letter Z")
         }
+        notifyDataSetChanged()
+    }
+
+    fun filterTasksByDate(){
+        taskList.clear()
+        taskList.addAll(App.db.taskDao().getTasksByDate())
+        Log.e("ololo","filter by date ")
         notifyDataSetChanged()
     }
 
@@ -58,13 +66,12 @@ class TaskAdapter(val click: OnLongItemClick): RecyclerView.Adapter<TaskAdapter.
         fun bind(taskModel: TaskModel) {
             binding.tvTitleItem.text = taskModel.title
             binding.tvTitleDesc.text = taskModel.desc
+            binding.tvTitleDate.text = taskModel.date
 
             binding.root.setOnLongClickListener {
                 click.longClick(adapterPosition)
                 true
             }
-
-
         }
     }
 

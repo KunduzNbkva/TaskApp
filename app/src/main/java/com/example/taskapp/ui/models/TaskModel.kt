@@ -8,5 +8,6 @@ data class TaskModel(
     @PrimaryKey(autoGenerate = true)
     var id : Long? = null,
     var title: String? = null,
-    var desc: String? = null
+    var desc: String? = null,
+    var date: String? = null
 )

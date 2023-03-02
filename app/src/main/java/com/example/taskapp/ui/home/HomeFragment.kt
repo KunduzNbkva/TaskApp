@@ -64,8 +64,8 @@ class HomeFragment : Fragment(), OnLongItemClick{
         }
 
     private fun getDataFromLocalDB(){
-       val listAllTasks =  App.db.taskDao().getAllTasks().reversed()
-        taskAdapter.addAllTasksRoom(listAllTasks as MutableList<TaskModel>)
+       val listAllTasks =  App.db.taskDao().getAllTasks()
+        taskAdapter.addAllTasksRoom(listAllTasks)
     }
 
     override fun longClick(position: Int) {
@@ -107,6 +107,11 @@ class HomeFragment : Fragment(), OnLongItemClick{
                     R.id.action_sort_by_z -> {
                         taskAdapter.filter(false)
                         showToast("Filtered from Z to A")
+                        true
+                    }
+                    R.id.action_sort_by_date -> {
+                        taskAdapter.filterTasksByDate()
+                        showToast("Filtered by date")
                         true
                     }
                     else -> false

@@ -24,4 +24,7 @@ interface TaskDao {
     @Query("SELECT * FROM TaskModel ORDER BY title DESC")
     fun getTasksFromZ(): MutableList<TaskModel>
 
+    @Query("SELECT * FROM TaskModel ORDER BY date DESC")
+    fun getTasksByDate(): MutableList<TaskModel>
+
 }
