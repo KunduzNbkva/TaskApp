@@ -1,11 +1,15 @@
 package com.example.taskapp.ui.home
 
+import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,9 +17,10 @@ import com.example.taskapp.App
 import com.example.taskapp.R
 import com.example.taskapp.databinding.FragmentHomeBinding
 import com.example.taskapp.extentions.showToast
+import com.example.taskapp.ui.home.new_task.NewTaskFragment
 import com.example.taskapp.ui.models.TaskModel
 
-class HomeFragment : Fragment(), OnLongItemClick{
+class HomeFragment : Fragment(), OnLongItemClick, OnItemClickListener{
    private lateinit var binding:FragmentHomeBinding
    private lateinit var taskAdapter: TaskAdapter
 
@@ -28,15 +33,15 @@ class HomeFragment : Fragment(), OnLongItemClick{
         initViews()
         initListeners()
 
-
         return binding.root
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        taskAdapter = TaskAdapter(this)
+        taskAdapter = TaskAdapter(this,this)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
         taskAdapter.notifyDataSetChanged()
@@ -51,17 +56,9 @@ class HomeFragment : Fragment(), OnLongItemClick{
     private fun initViews() {
         binding.rvHome.layoutManager = LinearLayoutManager(context)
         binding.rvHome.adapter = taskAdapter
-
-//        setFragmentResultListener(TASK_KEY){_,bundle ->
-//            Log.e("ololo","initViews: "+bundle.getString("title")
-//                    +bundle.getString("desc"))
-//
-//            val title = bundle.getString("title")
-//            val desc = bundle.getString("desc")
- //       taskAdapter.addTask(TaskModel())
         getDataFromLocalDB()
 
-        }
+    }
 
     private fun getDataFromLocalDB(){
        val listAllTasks =  App.db.taskDao().getAllTasks()
@@ -70,15 +67,15 @@ class HomeFragment : Fragment(), OnLongItemClick{
 
     override fun longClick(position: Int) {
         val builder = AlertDialog.Builder(binding.root.context)
-        builder.setTitle("Deleting")
-        builder.setMessage("Do you want to delete this task?")
+        builder.setTitle(getString(R.string.deleting))
+        builder.setMessage(getString(R.string.wanna_delete))
 
-        builder.setPositiveButton("OK") { dialog, which ->
+        builder.setPositiveButton(getString(R.string.ok)) { _, _ ->
             App.db.taskDao().deleteTask(taskAdapter.getItem(position))
             taskAdapter.removeItem(position)
         }
 
-        builder.setNegativeButton("NO") { dialog, which ->
+        builder.setNegativeButton(getString(R.string.no)) { dialog, _ ->
             dialog.dismiss()
         }
         builder.show()
@@ -97,21 +94,20 @@ class HomeFragment : Fragment(), OnLongItemClick{
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                // Handle the menu selection
                 return when (menuItem.itemId) {
                     R.id.action_sort_by_a -> {
                         taskAdapter.filter(true)
-                        showToast("Filtered from A to Z")
+                        showToast(getString(R.string.filter_from_a_z))
                         true
                     }
                     R.id.action_sort_by_z -> {
                         taskAdapter.filter(false)
-                        showToast("Filtered from Z to A")
+                        showToast(getString(R.string.filter_from_z_a))
                         true
                     }
                     R.id.action_sort_by_date -> {
                         taskAdapter.filterTasksByDate()
-                        showToast("Filtered by date")
+                        showToast(getString(R.string.filter_by_date))
                         true
                     }
                     else -> false
@@ -121,8 +117,23 @@ class HomeFragment : Fragment(), OnLongItemClick{
             override fun onMenuClosed(menu: Menu) {
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
+        setFragmentResultListener(EDITED_TASK) { _, bundle ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                taskAdapter.editTask(bundle.getSerializable(NewTaskFragment.TASK, TaskModel::class.java)!!, bundle.getInt(NewTaskFragment.POSITION))
+            }else{
+                taskAdapter.editTask(bundle.getSerializable(NewTaskFragment.TASK) as TaskModel, bundle.getInt(NewTaskFragment.POSITION))
+            }
+        }
     }
 
+    override fun onItemClick(task: TaskModel, position: Int) {
+        if (task.id != null){
+            findNavController().navigate(R.id.navigation_new_task, bundleOf(NewTaskFragment.TASK to task, NewTaskFragment.POSITION to position))
+        }
+    }
 
-
+    companion object {
+        const val EDITED_TASK = "edited_task"
+    }
 }

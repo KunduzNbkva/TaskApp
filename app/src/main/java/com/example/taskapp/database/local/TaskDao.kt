@@ -1,9 +1,6 @@
 package com.example.taskapp.database.local
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.example.taskapp.ui.models.TaskModel
 
 @Dao
@@ -26,5 +23,8 @@ interface TaskDao {
 
     @Query("SELECT * FROM TaskModel ORDER BY date ASC")
     fun getTasksByDate(): MutableList<TaskModel>
+
+    @Update()
+    fun updateTask(task: TaskModel)
 
 }

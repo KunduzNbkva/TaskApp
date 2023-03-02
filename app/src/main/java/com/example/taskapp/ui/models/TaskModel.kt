@@ -10,4 +10,4 @@ data class TaskModel(
     var title: String? = null,
     var desc: String? = null,
     var date: String? = null
-)
+):java.io.Serializable
